@@ -29,6 +29,13 @@ class HomePage extends StatelessWidget {
       amount: 59.99,
       date: DateTime.now(),
     ),
+
+     Transaction(
+      id: '2',
+      title: 'new wears',
+      amount: 39.99,
+      date: DateTime.now(),
+    ),
   ];
 
   @override
@@ -56,15 +63,22 @@ class HomePage extends StatelessWidget {
                 child: Row(
                   children: [
                     Container(
+                      margin:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.brown, width: 2),
+                      ),
+                      padding: EdgeInsets.all(10),
                       child: Text(
                         transactions.amount.toString(),
                       ),
                     ),
-
-                    Column(children: [
-                      Text(transactions.title),
-                      Text(transactions.date.toString()),
-                    ],)
+                    Column(
+                      children: [
+                        Text(transactions.title),
+                        Text(transactions.date.toString()),
+                      ],
+                    )
                   ],
                 ),
               );
