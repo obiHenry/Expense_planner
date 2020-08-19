@@ -29,8 +29,7 @@ class HomePage extends StatelessWidget {
       amount: 59.99,
       date: DateTime.now(),
     ),
-
-     Transaction(
+    Transaction(
       id: '2',
       title: 'new wears',
       amount: 39.99,
@@ -66,17 +65,32 @@ class HomePage extends StatelessWidget {
                       margin:
                           EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.brown, width: 2),
+                        border: Border.all(color: Colors.purple, width: 2),
                       ),
                       padding: EdgeInsets.all(10),
                       child: Text(
-                        transactions.amount.toString(),
+                        '\$${transactions.amount}',
+                        textAlign: TextAlign.end,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Colors.purple),
                       ),
                     ),
                     Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(transactions.title),
-                        Text(transactions.date.toString()),
+                        Text(
+                          transactions.title,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        Text(
+                          transactions.date.toString(),
+                          style: TextStyle(color: Colors.grey),
+                        ),
                       ],
                     )
                   ],
