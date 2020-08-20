@@ -1,8 +1,10 @@
 import 'dart:ffi';
+import 'dart:ui';
 
 import './models/Transaction.dart';
 import './widgets/transaction-list.dart';
 import './widgets/transactionTextField.dart';
+import './widgets/chart.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -17,6 +19,21 @@ class MainActivity extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.purple,
         accentColor: Colors.amber,
+        fontFamily: 'Quicksand',
+        textTheme: ThemeData.light().textTheme.copyWith(
+              headline6: TextStyle(
+                  fontFamily: 'Quicksand',
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold),
+            ),
+        appBarTheme: AppBarTheme(
+          textTheme: ThemeData.light().textTheme.copyWith(
+                headline6: TextStyle(
+                    fontFamily: 'OpenSans',
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+              ),
+        ),
       ),
       home: HomePage(),
     );
@@ -30,25 +47,36 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final List<Transaction> _userTransaction = [
-    Transaction(
-      id: '1',
-      title: 'new shoes',
-      amount: 69.90,
-      date: DateTime.now(),
-    ),
-    Transaction(
-      id: '2',
-      title: 'new watches',
-      amount: 39.90,
-      date: DateTime.now(),
-    ),
-    Transaction(
-      id: '3',
-      title: 'new clothes',
-      amount: 69.90,
-      date: DateTime.now(),
-    ),
+    // Transaction(
+    //   id: '1',
+    //   title: 'new shoes',
+    //   amount: 69.90,
+    //   date: DateTime.now(),
+    // ),
+    // Transaction(
+    //   id: '2',
+    //   title: 'new watches',
+    //   amount: 39.90,
+    //   date: DateTime.now(),
+    // ),
+    // Transaction(
+    //   id: '3',
+    //   title: 'new clothes',
+    //   amount: 69.90,
+    //   date: DateTime.now(),
+    // ),
   ];
+/* here u get the user transaction date 
+starting from the present day to past seven days in alist */
+  List<Transaction> get _recentTransactions {
+    return _userTransaction.where((transaction) {
+      return transaction.date.isAfter(
+        DateTime.now().subtract(
+          Duration(days: 7),
+        ),
+      );
+    }).toList();
+  }
 
   Void _addNewTransaction(String transactionTitle, double transactionAmount) {
     final newTransaction = Transaction(
@@ -92,14 +120,7 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Container(
-              width: double.infinity,
-              child: Card(
-                color: Colors.pink,
-                child: Text('CHART'),
-                elevation: 20,
-              ),
-            ),
+            Chart(_recentTransactions),
             TransactionList(_userTransaction),
           ],
         ),
