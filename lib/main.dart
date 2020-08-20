@@ -1,4 +1,5 @@
 import 'dart:ffi';
+import 'dart:ui';
 
 import './models/Transaction.dart';
 import './widgets/transaction-list.dart';
@@ -17,7 +18,23 @@ class MainActivity extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.purple,
         accentColor: Colors.amber,
-        
+        fontFamily: 'Quicksand',
+
+        textTheme: ThemeData.light().textTheme.copyWith(
+                headline6: TextStyle(
+                  fontFamily: 'Quicksand',
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold),
+              ),
+
+        appBarTheme: AppBarTheme(
+          textTheme: ThemeData.light().textTheme.copyWith(
+                headline6: TextStyle(
+                  fontFamily: 'OpenSans',
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold),
+              ),
+        ),
       ),
       home: HomePage(),
     );
@@ -31,24 +48,24 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final List<Transaction> _userTransaction = [
-    Transaction(
-      id: '1',
-      title: 'new shoes',
-      amount: 69.90,
-      date: DateTime.now(),
-    ),
-    Transaction(
-      id: '2',
-      title: 'new watches',
-      amount: 39.90,
-      date: DateTime.now(),
-    ),
-    Transaction(
-      id: '3',
-      title: 'new clothes',
-      amount: 69.90,
-      date: DateTime.now(),
-    ),
+    // Transaction(
+    //   id: '1',
+    //   title: 'new shoes',
+    //   amount: 69.90,
+    //   date: DateTime.now(),
+    // ),
+    // Transaction(
+    //   id: '2',
+    //   title: 'new watches',
+    //   amount: 39.90,
+    //   date: DateTime.now(),
+    // ),
+    // Transaction(
+    //   id: '3',
+    //   title: 'new clothes',
+    //   amount: 69.90,
+    //   date: DateTime.now(),
+    // ),
   ];
 
   Void _addNewTransaction(String transactionTitle, double transactionAmount) {
@@ -86,7 +103,6 @@ class _HomePageState extends State<HomePage> {
               icon: Icon(Icons.add),
               onPressed: () => _startAddNewtransaction(context)),
         ],
-        
         title: Text('Expense_planner'),
       ),
       body: SingleChildScrollView(
