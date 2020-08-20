@@ -17,7 +17,6 @@ class MainActivity extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.purple,
         accentColor: Colors.amber,
-        
       ),
       home: HomePage(),
     );
@@ -86,7 +85,6 @@ class _HomePageState extends State<HomePage> {
               icon: Icon(Icons.add),
               onPressed: () => _startAddNewtransaction(context)),
         ],
-        
         title: Text('Expense_planner'),
       ),
       body: SingleChildScrollView(
