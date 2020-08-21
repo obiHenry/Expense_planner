@@ -15,23 +15,30 @@ class MainActivity extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+
       title: ' Flutter app',
       theme: ThemeData(
         primarySwatch: Colors.purple,
         accentColor: Colors.amber,
         fontFamily: 'Quicksand',
+
         textTheme: ThemeData.light().textTheme.copyWith(
               headline6: TextStyle(
-                  fontFamily: 'Quicksand',
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold),
+                fontFamily: 'OpenSans',
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+              button: TextStyle(color: Colors.white),
             ),
+
         appBarTheme: AppBarTheme(
           textTheme: ThemeData.light().textTheme.copyWith(
                 headline6: TextStyle(
-                    fontFamily: 'OpenSans',
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold),
+                  fontFamily: 'Quicksand',
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
         ),
       ),
@@ -66,7 +73,7 @@ class _HomePageState extends State<HomePage> {
     //   date: DateTime.now(),
     // ),
   ];
-/* here u get the user transaction date 
+/* here u get the user transaction dates 
 starting from the present day to past seven days in alist */
   List<Transaction> get _recentTransactions {
     return _userTransaction.where((transaction) {
@@ -78,12 +85,13 @@ starting from the present day to past seven days in alist */
     }).toList();
   }
 
-  Void _addNewTransaction(String transactionTitle, double transactionAmount) {
+  Void _addNewTransaction(String transactionTitle, double transactionAmount, DateTime chosenDate) {
     final newTransaction = Transaction(
         id: DateTime.now().toString(),
         title: transactionTitle,
         amount: transactionAmount,
-        date: DateTime.now());
+        date: chosenDate
+        );
 
     setState(() {
       _userTransaction.add(newTransaction);
@@ -125,7 +133,7 @@ starting from the present day to past seven days in alist */
           ],
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         onPressed: () => _startAddNewtransaction(context),
         child: Icon(

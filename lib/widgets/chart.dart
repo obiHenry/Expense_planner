@@ -34,7 +34,7 @@ transactions of all the last seven days transaction store it in transactionValue
         'day': DateFormat.E().format(weekDday).substring(0, 1),
         'amount': totalSum
       });
-    });
+    }).reversed.toList();
   }
   // here u get total money spent 
   double get totalSpending {
@@ -48,7 +48,7 @@ transactions of all the last seven days transaction store it in transactionValue
     // print(transactionValues);
     return Card(
       elevation: 6,
-      margin: EdgeInsets.all(20),
+      margin: EdgeInsets.all(15),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         // put the transaction value to map container(transactions) and then display on the chartbar
