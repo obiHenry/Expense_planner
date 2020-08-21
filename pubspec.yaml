@@ -65,10 +65,10 @@ flutter:
     - family: OpenSans
       fonts:
         - asset: assets/font/OpenSans-Regular.ttf
-        - asset: assets/font/OpenSan-Bold.ttf
+        - asset: assets/font/OpenSans-Bold.ttf
           weight: 700
 
-    - family:Quicksand
+    - family: Quicksand
       fonts:
         - asset: assets/font/Quicksand-Regular.ttf
         - asset: assets/font/Quicksand-Bold.ttf
