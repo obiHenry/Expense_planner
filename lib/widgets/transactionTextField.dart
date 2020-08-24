@@ -1,5 +1,8 @@
+import 'dart:io';
 import 'dart:ffi';
 
+import 'package:Expense_planner/widgets/adaptive_button.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -17,33 +20,39 @@ class TransactionTextFields extends StatefulWidget {
 class _TransactionTextFieldsState extends State<TransactionTextFields> {
   final titleId = TextEditingController();
   final amountId = TextEditingController();
-  
 
   DateTime _selectedDate;
 
+  void pickDate(pickedDate) {
+    if (pickedDate == null) {
+      return;
+    } else {
+      setState(() {
+        _selectedDate = pickedDate;
+      });
+    }
+  }
+
   void _showDatePicker() {
-    showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2019),
-      lastDate: DateTime(2022),
-    ).then((pickedDate) {
-      if (pickedDate == null) {
-        return;
-      } else {
-        setState(() {
-          _selectedDate = pickedDate;
-        });
-      }
-    });
+    Platform.isIOS
+        ? CupertinoDatePicker(
+            onDateTimeChanged: (pickedDate) => pickDate(pickedDate),
+          )
+        : showDatePicker(
+            context: context,
+            initialDate: DateTime.now(),
+            firstDate: DateTime(2020),
+            lastDate: DateTime(2022),
+          ).then((pickedDate) {
+            pickDate(pickedDate);
+          });
   }
 
   Void submitData() {
     final enteredTitle = titleId.text;
     final enteredamount = double.parse(amountId.text);
-  
 
-    if(amountId.text.isEmpty){
+    if (amountId.text.isEmpty) {
       return null;
     }
 
@@ -62,57 +71,68 @@ class _TransactionTextFieldsState extends State<TransactionTextFields> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 5,
-      child: Container(
-        padding: EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            TextField(
-              decoration: InputDecoration(labelText: 'Title'),
-              controller: titleId,
-              onSubmitted: (val) => submitData(),
-              // onChanged: (val) => titleInput = val,
-            ),
-            TextField(
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(labelText: 'Amount'),
-              controller: amountId,
-              onSubmitted: (val) => submitData(),
-              // onChanged: (val) => amountInput = val,
-            ),
-            Container(
-              height: 90,
-              child: Row(
-                children: [
-                  Text(_selectedDate == null
-                      ? 'No Date chosen'
-                      : '${DateFormat.yMd().format(_selectedDate)}'
-                      ),
-                  FlatButton(
-                    onPressed: () => _showDatePicker(),
-                    child: Text(
-                      "Choose Date",
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      ),
+    return SingleChildScrollView(
+      child: Card(
+        elevation: 5,
+        child: Container(
+          padding: EdgeInsets.only(
+              top: 10,
+              left: 10,
+              right: 10,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              /* here use cupertinoTextField if on ios else use textField if on android */
+              Platform.isIOS
+                  ? CupertinoTextField(
+                      placeholder: 'Title',
+                      controller: titleId,
+                      onSubmitted: (val) => submitData(),
+                    )
+                  : TextField(
+                      decoration: InputDecoration(labelText: 'Title'),
+                      controller: titleId,
+                      onSubmitted: (val) => submitData(),
+                      // onChanged: (val) => titleInput = val,
                     ),
-                    textColor: Theme.of(context).primaryColor,
-                  ),
-                ],
+              Platform.isIOS
+                  ? CupertinoTextField(
+                      placeholder: 'Amount',
+                      keyboardType: TextInputType.number,
+                      controller: amountId,
+                      onSubmitted: (val) => submitData(),
+                    )
+                  : TextField(
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(labelText: 'Amount'),
+                      controller: amountId,
+                      onSubmitted: (val) => submitData(),
+                      // onChanged: (val) => amountInput = val,
+                    ),
+              Container(
+                height: 90,
+                child: Row(
+                  children: [
+                    Text(
+                      _selectedDate == null
+                          ? 'No Date chosen'
+                          : '${DateFormat.yMd().format(_selectedDate)}',
+                    ),
+                    AdaptiveButton('choose Date', _showDatePicker),
+                  ],
+                ),
               ),
-            ),
-            RaisedButton(
-              onPressed: submitData,
-              child: Text(
-                'Add Transaction',
+              RaisedButton(
+                onPressed: submitData,
+                child: Text(
+                  'Add Transaction',
+                ),
+                textColor: Theme.of(context).textTheme.button.color,
+                color: Colors.purple,
               ),
-              textColor: Theme.of(context).textTheme.button.color,
-              color: Colors.purple,
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

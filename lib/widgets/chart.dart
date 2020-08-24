@@ -46,24 +46,28 @@ transactions of all the last seven days transaction store it in transactionValue
   @override
   Widget build(BuildContext context) {
     // print(transactionValues);
-    return Card(
-      elevation: 6,
-      margin: EdgeInsets.all(15),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        // put the transaction value to map container(transactions) and then display on the chartbar
-          children: transactionValues.map((transactions) {
-        return Flexible(
-          fit: FlexFit.tight,
-                  child: ChartBar(
-            transactions['day'],
-            transactions['amount'],
-            totalSpending == 0.0
-                ? 0.0
-                : (transactions['amount'] as double) / totalSpending,
-          ),
-        );
-      }).toList()),
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: Card(
+        elevation: 6,
+        
+        margin: EdgeInsets.all(15),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          // put the transaction value to map container(transactions) and then display on the chartbar
+            children: transactionValues.map((transactions) {
+          return Flexible(
+            fit: FlexFit.tight,
+                    child: ChartBar(
+              transactions['day'],
+              transactions['amount'],
+              totalSpending == 0.0
+                  ? 0.0
+                  : (transactions['amount'] as double) / totalSpending,
+            ),
+          );
+        }).toList()),
+      ),
     );
   }
 }
