@@ -23,13 +23,47 @@ void main() {
 class MainActivity extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return
+    /* this is incase you want to use cupertino themes but at the
+     time of this project flutter doesnt have enough features the cupertino theme can use */
+    //  Platform.isIOS ? CupertinoApp(
+    //    title: ' Flutter app',
+    //   theme: CupertinoThemeData(
+    //     primaryColor: Colors.purple,
+    //     primaryContrastingColor: Colors.white,
+
+    //     accentColor: Colors.amber,
+    //     fontFamily: 'Quicksand',
+    //     errorColor: Colors.red,
+    //     textTheme: ThemeData.light().textTheme.copyWith(
+    //           headline6: TextStyle(
+    //             fontFamily: 'OpenSans',
+    //             fontSize: 20,
+    //             fontWeight: FontWeight.bold,
+    //           ),
+    //           button: TextStyle(color: Colors.white),
+    //         ),
+    //     appBarTheme: AppBarTheme(
+    //       textTheme: ThemeData.light().textTheme.copyWith(
+    //             headline6: TextStyle(
+    //               fontFamily: 'Quicksand',
+    //               color: Colors.white,
+    //               fontSize: 20,
+    //               fontWeight: FontWeight.bold,
+    //             ),
+    //           ),
+    //     ),
+    //   ),
+    //   home: HomePage(),
+    // ):
+     MaterialApp(
       title: ' Flutter app',
       theme: ThemeData(
         primarySwatch: Colors.purple,
         accentColor: Colors.amber,
         fontFamily: 'Quicksand',
         errorColor: Colors.red,
+
         textTheme: ThemeData.light().textTheme.copyWith(
               headline6: TextStyle(
                 fontFamily: 'OpenSans',
@@ -172,7 +206,8 @@ starting from the present day to past seven days in alist */
       ),
     );
 
-    final pageBody = SafeArea(child:  SingleChildScrollView(
+    final pageBody = SafeArea(
+      child:  SingleChildScrollView(
       child: Column(
         // mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -189,7 +224,7 @@ starting from the present day to past seven days in alist */
           if (!isInLandscapeMode) transactionList,
           if (isInLandscapeMode)
             Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Text('Show chart'),
+              Text('Show chart', style: Theme.of(context).textTheme.headline6,),
               Switch.adaptive(
                 activeColor: Theme.of(context).accentColor,
                 value: true,
@@ -212,12 +247,13 @@ starting from the present day to past seven days in alist */
                 : transactionList,
         ],
       ),
-    ),);
+    ),
+    );
 
     return Platform.isIOS
         ? CupertinoPageScaffold(
-            child: pageBody,
             navigationBar: appBar,
+            child: pageBody,
           )
         : Scaffold(
             appBar: appBar,
