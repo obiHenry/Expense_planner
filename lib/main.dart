@@ -1,12 +1,22 @@
+import 'dart:io';
+
 import 'dart:ffi';
 import 'dart:ui';
+
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import './models/Transaction.dart';
 import './widgets/transaction-list.dart';
 import './widgets/transactionTextField.dart';
-import 'package:flutter/material.dart';
+import './widgets/chart.dart';
 
 void main() {
+  // SystemChrome.setPreferredOrientations([
+  //   DeviceOrientation.portraitUp,
+  //   DeviceOrientation.portraitDown,
+  // ]);
   runApp(MainActivity());
 }
 
@@ -19,20 +29,23 @@ class MainActivity extends StatelessWidget {
         primarySwatch: Colors.purple,
         accentColor: Colors.amber,
         fontFamily: 'Quicksand',
-
+        errorColor: Colors.red,
         textTheme: ThemeData.light().textTheme.copyWith(
-                headline6: TextStyle(
-                  fontFamily: 'Quicksand',
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold),
+              headline6: TextStyle(
+                fontFamily: 'OpenSans',
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
               ),
-
+              button: TextStyle(color: Colors.white),
+            ),
         appBarTheme: AppBarTheme(
           textTheme: ThemeData.light().textTheme.copyWith(
                 headline6: TextStyle(
-                  fontFamily: 'OpenSans',
+                  fontFamily: 'Quicksand',
+                  color: Colors.white,
                   fontSize: 20,
-                  fontWeight: FontWeight.bold),
+                  fontWeight: FontWeight.bold,
+                ),
               ),
         ),
       ),
@@ -47,6 +60,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  /* this is the container where the whole listed of items added
+   are stored so to access this element u have to access _userTransaction */
   final List<Transaction> _userTransaction = [
     // Transaction(
     //   id: '1',
@@ -67,13 +82,25 @@ class _HomePageState extends State<HomePage> {
     //   date: DateTime.now(),
     // ),
   ];
+/* here u get the user transaction dates 
+starting from the present day to past seven days in alist */
+  List<Transaction> get _recentTransactions {
+    return _userTransaction.where((transaction) {
+      return transaction.date.isAfter(
+        DateTime.now().subtract(
+          Duration(days: 7),
+        ),
+      );
+    }).toList();
+  }
 
-  Void _addNewTransaction(String transactionTitle, double transactionAmount) {
+  Void _addNewTransaction(
+      String transactionTitle, double transactionAmount, DateTime chosenDate) {
     final newTransaction = Transaction(
         id: DateTime.now().toString(),
         title: transactionTitle,
         amount: transactionAmount,
-        date: DateTime.now());
+        date: chosenDate);
 
     setState(() {
       _userTransaction.add(newTransaction);
@@ -94,41 +121,117 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void _deleteItemFromList(String id) {
+    setState(() {
+      _userTransaction.removeWhere((element) => element.id == id);
+    });
+  }
+
+  bool _showChart = false;
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        actions: [
-          IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () => _startAddNewtransaction(context)),
-        ],
-        title: Text('Expense_planner'),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Container(
-              width: double.infinity,
-              child: Card(
-                color: Colors.pink,
-                child: Text('CHART'),
-                elevation: 20,
-              ),
+    final mediaQuery = MediaQuery.of(context);
+    final isInLandscapeMode = mediaQuery.orientation == Orientation.landscape;
+
+    final PreferredSizeWidget appBar = Platform.isIOS
+        ? CupertinoNavigationBar(
+            middle: Text('Expense_planner'),
+            trailing: Row(
+
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // IconButton(
+                //   icon: Icon(Icons.add),
+                //   onPressed: () => _startAddNewtransaction(context),
+                // ),
+                GestureDetector(
+                  child: Icon(CupertinoIcons.add),
+                  onTap: () => _startAddNewtransaction(context),
+                )
+              ],
             ),
-            TransactionList(_userTransaction),
-          ],
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _startAddNewtransaction(context),
-        child: Icon(
-          Icons.add,
-        ),
+          )
+        : AppBar(
+            title: Text('Expense_planner'),
+            actions: [
+              IconButton(
+                  icon: Icon(Icons.add),
+                  onPressed: () => _startAddNewtransaction(context)),
+            ],
+          );
+
+    final transactionList = Container(
+      height: (mediaQuery.size.height -
+              appBar.preferredSize.height -
+              mediaQuery.padding.top) *
+          0.7,
+      child: TransactionList(
+        _userTransaction,
+        _deleteItemFromList,
       ),
     );
+
+    final pageBody = SafeArea(child:  SingleChildScrollView(
+      child: Column(
+        // mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+
+        children: <Widget>[
+          if (!isInLandscapeMode)
+            Container(
+              height: (mediaQuery.size.height -
+                      appBar.preferredSize.height -
+                      mediaQuery.padding.top) *
+                  0.3,
+              child: Chart(_recentTransactions),
+            ),
+          if (!isInLandscapeMode) transactionList,
+          if (isInLandscapeMode)
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Text('Show chart'),
+              Switch.adaptive(
+                activeColor: Theme.of(context).accentColor,
+                value: true,
+                onChanged: (val) {
+                  setState(() {
+                    _showChart = val;
+                  });
+                },
+              )
+            ]),
+          if (isInLandscapeMode)
+            _showChart == true
+                ? Container(
+                    height: (mediaQuery.size.height -
+                            appBar.preferredSize.height -
+                            mediaQuery.padding.top) *
+                        0.7,
+                    child: Chart(_recentTransactions),
+                  )
+                : transactionList,
+        ],
+      ),
+    ),);
+
+    return Platform.isIOS
+        ? CupertinoPageScaffold(
+            child: pageBody,
+            navigationBar: appBar,
+          )
+        : Scaffold(
+            appBar: appBar,
+            body: pageBody,
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerDocked,
+            floatingActionButton: Platform.isIOS
+                ? Container()
+                : FloatingActionButton(
+                    onPressed: () => _startAddNewtransaction(context),
+                    child: Icon(
+                      Icons.add,
+                    ),
+                  ),
+          );
   }
 }
