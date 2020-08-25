@@ -34,28 +34,30 @@ class TransactionList extends StatelessWidget {
                 );
               })
             : 
-        ListView.builder(
-            itemBuilder: (context, index) {
-              return TransactionItem(
-                transaction: transactions[index],
-                deleteTransaction: deleteTransaction,
-                );
+        // ListView.builder(
+        //     itemBuilder: (context, index) {
+        //       return TransactionItem(
+        //         transaction: transactions[index],
+        //         deleteTransaction: deleteTransaction,
+        //         );
 
-            },itemCount: transactions.length,
-          )
+        //     },itemCount: transactions.length,
+        //   )
 //here you can equally use a column and a singlechildscrollView to achieve what listview.building is doing that is displaying a listview
-        // SingleChildScrollView(
-        //                   child: Column(
+        SingleChildScrollView(
+                child: Column(
                 
-        //           children: [
-        //             ...transactions.map((transaction) {
-        //               return TransactionItem(
-        //                   transaction: transaction,
-        //                   deleteTransaction: deleteTransaction);
-        //             })
-        //           ],
-        //         ),
-        //     )
+                  children: 
+                    
+                    transactions.map((transaction) {
+                      return TransactionItem(
+                        key: ValueKey(transaction.id),
+                          transaction: transaction,
+                          deleteTransaction: deleteTransaction);
+                    }).toList()
+                  ,
+                ),
+            )
         );
   }
 }
