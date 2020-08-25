@@ -24,46 +24,45 @@ class MainActivity extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return
-    /* this is incase you want to use cupertino themes but at the
+        /* this is incase you want to use cupertino themes but at the
      time of this project flutter doesnt have enough features the cupertino theme can use */
-    //  Platform.isIOS ? CupertinoApp(
-    //    title: ' Flutter app',
-    //   theme: CupertinoThemeData(
-    //     primaryColor: Colors.purple,
-    //     primaryContrastingColor: Colors.white,
+        //  Platform.isIOS ? CupertinoApp(
+        //    title: ' Flutter app',
+        //   theme: CupertinoThemeData(
+        //     primaryColor: Colors.purple,
+        //     primaryContrastingColor: Colors.white,
 
-    //     accentColor: Colors.amber,
-    //     fontFamily: 'Quicksand',
-    //     errorColor: Colors.red,
-    //     textTheme: ThemeData.light().textTheme.copyWith(
-    //           headline6: TextStyle(
-    //             fontFamily: 'OpenSans',
-    //             fontSize: 20,
-    //             fontWeight: FontWeight.bold,
-    //           ),
-    //           button: TextStyle(color: Colors.white),
-    //         ),
-    //     appBarTheme: AppBarTheme(
-    //       textTheme: ThemeData.light().textTheme.copyWith(
-    //             headline6: TextStyle(
-    //               fontFamily: 'Quicksand',
-    //               color: Colors.white,
-    //               fontSize: 20,
-    //               fontWeight: FontWeight.bold,
-    //             ),
-    //           ),
-    //     ),
-    //   ),
-    //   home: HomePage(),
-    // ):
-     MaterialApp(
+        //     accentColor: Colors.amber,
+        //     fontFamily: 'Quicksand',
+        //     errorColor: Colors.red,
+        //     textTheme: ThemeData.light().textTheme.copyWith(
+        //           headline6: TextStyle(
+        //             fontFamily: 'OpenSans',
+        //             fontSize: 20,
+        //             fontWeight: FontWeight.bold,
+        //           ),
+        //           button: TextStyle(color: Colors.white),
+        //         ),
+        //     appBarTheme: AppBarTheme(
+        //       textTheme: ThemeData.light().textTheme.copyWith(
+        //             headline6: TextStyle(
+        //               fontFamily: 'Quicksand',
+        //               color: Colors.white,
+        //               fontSize: 20,
+        //               fontWeight: FontWeight.bold,
+        //             ),
+        //           ),
+        //     ),
+        //   ),
+        //   home: HomePage(),
+        // ):
+        MaterialApp(
       title: ' Flutter app',
       theme: ThemeData(
         primarySwatch: Colors.purple,
         accentColor: Colors.amber,
         fontFamily: 'Quicksand',
         errorColor: Colors.red,
-
         textTheme: ThemeData.light().textTheme.copyWith(
               headline6: TextStyle(
                 fontFamily: 'OpenSans',
@@ -93,7 +92,25 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print('state');
+    super.didChangeAppLifecycleState(state);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
   /* this is the container where the whole listed of items added
    are stored so to access this element u have to access _userTransaction */
   final List<Transaction> _userTransaction = [
@@ -163,6 +180,56 @@ starting from the present day to past seven days in alist */
 
   bool _showChart = false;
 
+  List<Widget> _buildLandscapeContent(
+    MediaQueryData mediaQuery,
+    AppBar appBar,
+    Widget transactionList,
+  ) {
+    return [
+      Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Text(
+          'Show chart',
+          style: Theme.of(context).textTheme.headline6,
+        ),
+        Switch.adaptive(
+          activeColor: Theme.of(context).accentColor,
+          value: _showChart,
+          onChanged: (val) {
+            setState(() {
+              _showChart = val;
+            });
+          },
+        )
+      ]),
+      _showChart
+          ? Container(
+              height: (mediaQuery.size.height -
+                      appBar.preferredSize.height -
+                      mediaQuery.padding.top) *
+                  0.7,
+              child: Chart(_recentTransactions),
+            )
+          : transactionList,
+    ];
+  }
+
+  List<Widget> _buildPotraitContent(
+    MediaQueryData mediaQuery,
+    AppBar appBar,
+    Widget transactionList,
+  ) {
+    return [
+      Container(
+        height: (mediaQuery.size.height -
+                appBar.preferredSize.height -
+                mediaQuery.padding.top) *
+            0.3,
+        child: Chart(_recentTransactions),
+      ),
+      transactionList,
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
@@ -172,7 +239,6 @@ starting from the present day to past seven days in alist */
         ? CupertinoNavigationBar(
             middle: Text('Expense_planner'),
             trailing: Row(
-
               mainAxisSize: MainAxisSize.min,
               children: [
                 // IconButton(
@@ -207,47 +273,19 @@ starting from the present day to past seven days in alist */
     );
 
     final pageBody = SafeArea(
-      child:  SingleChildScrollView(
-      child: Column(
-        // mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
+      child: SingleChildScrollView(
+        child: Column(
+          // mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
 
-        children: <Widget>[
-          if (!isInLandscapeMode)
-            Container(
-              height: (mediaQuery.size.height -
-                      appBar.preferredSize.height -
-                      mediaQuery.padding.top) *
-                  0.3,
-              child: Chart(_recentTransactions),
-            ),
-          if (!isInLandscapeMode) transactionList,
-          if (isInLandscapeMode)
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Text('Show chart', style: Theme.of(context).textTheme.headline6,),
-              Switch.adaptive(
-                activeColor: Theme.of(context).accentColor,
-                value: true,
-                onChanged: (val) {
-                  setState(() {
-                    _showChart = val;
-                  });
-                },
-              )
-            ]),
-          if (isInLandscapeMode)
-            _showChart == true
-                ? Container(
-                    height: (mediaQuery.size.height -
-                            appBar.preferredSize.height -
-                            mediaQuery.padding.top) *
-                        0.7,
-                    child: Chart(_recentTransactions),
-                  )
-                : transactionList,
-        ],
+          children: <Widget>[
+            if (!isInLandscapeMode)
+              ..._buildPotraitContent(mediaQuery, appBar, transactionList),
+            if (isInLandscapeMode)
+              ..._buildLandscapeContent(mediaQuery, appBar, transactionList),
+          ],
+        ),
       ),
-    ),
     );
 
     return Platform.isIOS

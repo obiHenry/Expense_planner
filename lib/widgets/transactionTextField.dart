@@ -11,15 +11,43 @@ class TransactionTextFields extends StatefulWidget {
   // String amountInput;
   final Function addTransaction;
 
-  TransactionTextFields(this.addTransaction);
+  TransactionTextFields(this.addTransaction) {
+    print('constructor TransactionTextField widget');
+  }
 
   @override
-  _TransactionTextFieldsState createState() => _TransactionTextFieldsState();
+  _TransactionTextFieldsState createState() {
+    print('createState TransactionTextField widget');
+    return _TransactionTextFieldsState();
+  }
 }
 
-class _TransactionTextFieldsState extends State<TransactionTextFields> {
+  class _TransactionTextFieldsState extends State<TransactionTextFields> {
+  _TransactionTextFieldsState()  {
+    print('createState TransactionTextField state');
+
+  }
+
+  @override
+  void initState() {
+    print('initState TransactionTextField state');
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(TransactionTextFields oldWidget) {
+    print('didUpdate TransactionTextField state');
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  void dispose() {
+    print('disposed TransactionTextField state');
+    super.dispose();
+  }
   final titleId = TextEditingController();
   final amountId = TextEditingController();
+
 
   DateTime _selectedDate;
 
